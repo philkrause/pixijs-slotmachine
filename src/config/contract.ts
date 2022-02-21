@@ -1,8 +1,7 @@
 export interface ConfigInterface {
     gameWidth: number;
     gameHeight: number;
-    firstreelPosition: { x: number; y: number };
-    secondreelPosition: {x: number; y: number};
+    reelPosition: { x: number; y: number };
     playButtonPosition: { x: number; y: number };
     selectEasyModePosition: { x: number; y: number };
     FPSDisplayPosition: { x: number; y: number };

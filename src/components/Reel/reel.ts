@@ -1,69 +1,73 @@
 import * as PIXI from 'pixi.js';
 import reelCellsImg from './assets/reel_cells.png';
+// import aceImg from './assets/a.png'
 import { ConfigInterface } from '../../config/contract';
 //import util from 'util'
 
 class Reel extends PIXI.TilingSprite {
-   
+
   protected spinningOutcome: number;
-
   protected spinningCycles: number;
-
   protected spinningCyclesMeter: number;
-
   protected reelIndex: number;
-
   protected horizontalMargin: number;
-
   protected verticalPadding: number;
-
   protected cellHeight: number;
 
   protected appTicker: PIXI.Ticker;
 
-  static totalCells: number = 0;
+  static totalCells: number;
 
   constructor(reelIndex: number, config: ConfigInterface, ticker: PIXI.Ticker) {
     const texture = PIXI.Texture.from('reelCellsImg');
+
     const {
       reelCellHeight,
       reelVerticalPadding,
       reelCellWidth,
       reelHorizontalMargin,
-      reelSpinningCycles
+      reelSpinningCycles,
+      reelVisibleCells,
+
     } = config;
-    const reelHeight = reelCellHeight
+  
+    //const jackCell = reelCellsImg
+    const reelHeight = reelCellHeight * Reel.totalCells + 1 * reelVisibleCells
     super(texture, reelCellWidth, reelHeight);
     this.appTicker = ticker;
-    this.spinningOutcome = 0;
+    this.spinningOutcome = Math.floor(Math.random() * (Reel.totalCells + 1));
     this.cellHeight = reelCellHeight;
     this.horizontalMargin = reelHorizontalMargin;
     this.spinningCycles = reelSpinningCycles;
     this.verticalPadding = reelVerticalPadding;
     this.reelIndex = reelIndex;
-    this.spinningCyclesMeter = 0;
+    this.spinningCyclesMeter = Reel.totalCells + 1;
+    //this.allCells = allImgs
     this.setPosition();
   }
   protected setPosition() {
-    this.x = this.reelIndex * (this.width + this.horizontalMargin);
+    console.log(`WIDTH: ${this.width}`)
+    this.scale.x = .5
+    this.scale.y = .5
+    this.x = this.reelIndex * (this.width/2 + this.horizontalMargin);
     this.y = 0;
-    this.scale.set(.6)
   }
 
   protected setTilePositionAt(cellNumber: number) {
     this.tilePosition.x = 0;
-    this.tilePosition.y = -cellNumber * this.cellHeight;
-   //console.log(`Tileposition y: ${util.inspect(this.tilePosition)}`)
+    this.tilePosition.y = -cellNumber * this.cellHeight + Math.ceil(this.verticalPadding / 2);
   }
 
   protected resetSpinningMeter() {
+    //const totalHeight = this.cellHeight * Reel.totalCells
+   // const randomYpos = Math.floor(Math.random() * totalHeight);
     this.spinningCyclesMeter = this.spinningCycles * this.cellHeight * Reel.totalCells;
     //console.log(`Spinning Meter: ${this.spinningCyclesMeter}`)
   }
 
+
   static rollDice(): number {
     const chance = Reel.getNumberBetween(0, 10);
-    console.log(`Chance: ${chance}`)
     if (chance < 5) {
       return Reel.getRandomOutcome();
     }
@@ -71,8 +75,8 @@ class Reel extends PIXI.TilingSprite {
   }
   protected setSpinningOutcome(useOutcome: number) {
     this.spinningOutcome = useOutcome >= 0 ? useOutcome : Reel.getRandomOutcome();
-    console.log(`Spinning Outcome: ${this.spinningOutcome}`)
-    
+    // console.log(`Spinning Outcome: ${this.spinningOutcome}`)
+
     this.setTilePositionAt(this.spinningOutcome);
     this.resetSpinningMeter();
   }
@@ -80,7 +84,6 @@ class Reel extends PIXI.TilingSprite {
   //ANIMATION  -----------------
   spin(useOutcome: number, spinningSpeedFactor: number, cb: Function) {
     this.setSpinningOutcome(useOutcome);
-
     const animation = () => {
       if (this.spinningCyclesMeter > 0) {
         this.tilePosition.y += spinningSpeedFactor;
@@ -97,6 +100,7 @@ class Reel extends PIXI.TilingSprite {
     this.appTicker.add(animation);
   }
 
+
   getSpinningOutcome() {
     return this.spinningOutcome;
   }
@@ -112,5 +116,7 @@ class Reel extends PIXI.TilingSprite {
 }
 
 PIXI.Loader.shared.add('reelCellsImg', reelCellsImg);
+//PIXI.Loader.shared.add('queenImg', queenImg);
+
 
 export default Reel;

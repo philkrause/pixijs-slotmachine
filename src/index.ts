@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js';
-import { config } from './config';
-import Background from './components/Background';
-import Spin from './components/Spin';
+import { config } from './config/config';
+//import Background from './components/Background';
+import Spin from './components/spin/spin';
 import PlayButton from './components/PlayButton';
 
 const { gameWidth, gameHeight } = config;
 
 function createApplication(): PIXI.Application {
   const app = new PIXI.Application({
-    backgroundColor: 0xC3C3D4,
+    backgroundColor: 0xB4C3D4,
     width: gameWidth,
     height: gameHeight
   });
@@ -41,16 +41,15 @@ window.onload = () =>
     const spinner = new Spin(config, app.ticker)
     stage.addChild(spinner);
 
-    const spinner2 = new Spin(config, app.ticker)
-    stage.addChild(spinner2);
+    console.log(spinner)
+    // const spinner2 = new Spin(config, app.ticker)
+    // stage.addChild(spinner2);
 
-    const background = new Background(config);
-    stage.addChild(background);
+    // const background = new Background(config);
+    // stage.addChild(background);
 
     const button = new PlayButton(config);
     stage.addChild(button);
-
-
 
     button.on('click', function (this: PlayButton) {
       if (!spinner.areSpinning()) {
